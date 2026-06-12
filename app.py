@@ -380,7 +380,16 @@ def admin_delete_edition(edition_id):
 
 # ---------------------------------------------------------------- entry point
 
-init_db()
+_db_initialized = False
+
+@app.before_request
+def ensure_db():
+    global _db_initialized
+    if not _db_initialized:
+        init_db()
+        _db_initialized = True
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=True)
+
