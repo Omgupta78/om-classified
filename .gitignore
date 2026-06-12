@@ -28,3 +28,5 @@ check_db.py
 
 # Vercel (old static deploy)
 .vercel/
+
+.vercel
