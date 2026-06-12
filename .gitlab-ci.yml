@@ -1,0 +1,12 @@
+# Builds the static Shree Classified site and publishes it to GitLab Pages
+# on every push to the default branch.
+pages:
+  stage: deploy
+  image: python:3.12-slim
+  script:
+    - python build.py
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Admin Login &mdash; Shree Classified{% endblock %}
+{% block content %}
+<div class="auth-box">
+  <h1>Admin Login</h1>
+  <form method="post">
+    <label>Username
+      <input type="text" name="username" required autofocus>
+    </label>
+    <label>Password
+      <input type="password" name="password" required>
+    </label>
+    <button type="submit" class="btn btn-primary">Log in</button>
+  </form>
+</div>
+{% endblock %}

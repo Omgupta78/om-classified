@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}{% if edition %}{{ edition.title }} &mdash; {% endif %}Shree Classified{% endblock %}
+{% block content %}
+{% if edition is none %}
+  <div class="empty-state">
+    <h2>No editions published yet</h2>
+    <p>The first weekly edition of <strong>Shree Classified</strong> will appear here soon.</p>
+  </div>
+{% else %}
+  <div class="edition-header">
+    <h1>{{ edition.title }}</h1>
+    <p class="edition-date">Published: {{ edition.publish_date }}</p>
+  </div>
+
+  {% if pages %}
+  <div class="viewer" id="viewer">
+    <div class="viewer-toolbar">
+      <button id="prev-btn" title="Previous page">&#9664; Prev</button>
+      <span id="page-indicator">Page 1 / {{ pages|length }}</span>
+      <button id="next-btn" title="Next page">Next &#9654;</button>
+      <span class="toolbar-sep"></span>
+      <button id="zoom-out-btn" title="Zoom out">&minus;</button>
+      <button id="zoom-in-btn" title="Zoom in">+</button>
+      <a id="download-link" href="{{ url_for('uploaded_file', filename=pages[0].filename) }}" download>Download page</a>
+    </div>
+    <div class="viewer-stage">
+      <img id="page-image" src="{{ url_for('uploaded_file', filename=pages[0].filename) }}" alt="Page 1">
+    </div>
+    <div class="thumbnails">
+      {% for page in pages %}
+        <img class="thumb {% if loop.first %}active{% endif %}" data-index="{{ loop.index0 }}"
+             src="{{ url_for('uploaded_file', filename=page.filename) }}" alt="Page {{ page.page_number }}">
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if edition.pdf_file %}
+  <div class="pdf-section">
+    {% if not pages %}
+    <iframe class="pdf-frame" src="{{ url_for('uploaded_file', filename=edition.pdf_file) }}"></iframe>
+    {% endif %}
+    <p><a class="btn" href="{{ url_for('uploaded_file', filename=edition.pdf_file) }}" target="_blank">Open full edition PDF</a></p>
+  </div>
+  {% endif %}
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% if pages %}
+<script>
+  const pageFiles = [{% for page in pages %}"{{ url_for('uploaded_file', filename=page.filename) }}"{% if not loop.last %},{% endif %}{% endfor %}];
+  let current = 0;
+  let zoom = 1;
+
+  const img = document.getElementById('page-image');
+  const indicator = document.getElementById('page-indicator');
+  const download = document.getElementById('download-link');
+  const thumbs = document.querySelectorAll('.thumb');
+
+  function show(index) {
+    current = Math.max(0, Math.min(index, pageFiles.length - 1));
+    img.src = pageFiles[current];
+    download.href = pageFiles[current];
+    indicator.textContent = 'Page ' + (current + 1) + ' / ' + pageFiles.length;
+    thumbs.forEach((t, i) => t.classList.toggle('active', i === current));
+  }
+  function applyZoom() {
+    img.style.width = (zoom * 100) + '%';
+  }
+
+  document.getElementById('prev-btn').onclick = () => show(current - 1);
+  document.getElementById('next-btn').onclick = () => show(current + 1);
+  document.getElementById('zoom-in-btn').onclick = () => { zoom = Math.min(zoom + 0.25, 3); applyZoom(); };
+  document.getElementById('zoom-out-btn').onclick = () => { zoom = Math.max(zoom - 0.25, 0.5); applyZoom(); };
+  thumbs.forEach(t => t.onclick = () => show(parseInt(t.dataset.index, 10)));
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft') show(current - 1);
+    if (e.key === 'ArrowRight') show(current + 1);
+  });
+  applyZoom();
+</script>
+{% endif %}
+{% endblock %}

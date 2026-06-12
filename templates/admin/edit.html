@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Edit Edition &mdash; Shree Classified{% endblock %}
+{% block content %}
+<h1>Edit edition</h1>
+<form method="post" enctype="multipart/form-data" class="admin-form">
+  <label>Edition title
+    <input type="text" name="title" value="{{ edition.title }}" required>
+  </label>
+  <label>Publish date
+    <input type="date" name="publish_date" value="{{ edition.publish_date }}" required>
+  </label>
+  <label>Add more page images (appended after existing pages)
+    <input type="file" name="pages" accept=".jpg,.jpeg,.png,.gif,.webp" multiple>
+  </label>
+  <label>Replace edition PDF {% if edition.pdf_file %}(current PDF will be replaced){% endif %}
+    <input type="file" name="pdf" accept=".pdf">
+  </label>
+  <button type="submit" class="btn btn-primary">Save changes</button>
+  <a class="btn" href="{{ url_for('admin_dashboard') }}">Back to dashboard</a>
+</form>
+
+{% if pages %}
+<h2>Pages</h2>
+<div class="page-manage-grid">
+  {% for page in pages %}
+  <div class="page-manage-card">
+    <img src="{{ url_for('uploaded_file', filename=page.filename) }}" alt="Page {{ page.page_number }}">
+    <p>Page {{ page.page_number }}</p>
+    <form method="post" action="{{ url_for('admin_delete_page', page_id=page.id) }}"
+          onsubmit="return confirm('Delete page {{ page.page_number }}?');">
+      <button type="submit" class="btn btn-small btn-danger">Delete page</button>
+    </form>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

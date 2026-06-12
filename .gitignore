@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+venv/
+.env
+
+# Database (now using Neon PostgreSQL)
+*.db
+
+# Uploads (stored on server)
+uploads/
+
+# Build output
+public/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp files
+check_db.py
+*.log
+
+# Vercel (old static deploy)
+.vercel/

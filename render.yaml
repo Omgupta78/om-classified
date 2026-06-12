@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: shree-classified
+    runtime: docker
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        value: "postgresql://neondb_owner:npg_TadgY6mjw3cG@ep-damp-brook-adaj2kn8-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        value: admin123

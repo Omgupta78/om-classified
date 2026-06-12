@@ -1,0 +1,116 @@
+:root {
+  --maroon: #8b1a1a;
+  --maroon-dark: #6e1212;
+  --gold: #f3c64b;
+  --paper: #faf7f0;
+  --ink: #222;
+  --border: #ddd;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: Georgia, 'Times New Roman', serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.site-header { background: var(--maroon); color: #fff; }
+.masthead { text-align: center; padding: 18px 16px 10px; }
+.brand { text-decoration: none; font-size: 2.4rem; font-weight: bold; letter-spacing: 1px; }
+.brand-shree { color: var(--gold); }
+.brand-classified { color: #fff; }
+.tagline { color: #f1e0c8; font-style: italic; margin-top: 4px; }
+.main-nav { background: var(--maroon-dark); text-align: center; padding: 8px; }
+.main-nav a { color: #fff; text-decoration: none; margin: 0 14px; font-family: Arial, sans-serif; font-size: 0.95rem; }
+.main-nav a:hover { color: var(--gold); }
+
+/* Layout */
+.content { flex: 1; width: 100%; max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+h1 { margin-bottom: 12px; }
+.muted { color: #777; font-size: 0.9rem; }
+
+/* Flash messages */
+.flash { padding: 10px 14px; border-radius: 4px; margin-bottom: 14px; font-family: Arial, sans-serif; }
+.flash-success { background: #e6f4e6; color: #226622; border: 1px solid #b7dcb7; }
+.flash-error { background: #fbe7e7; color: #8b1a1a; border: 1px solid #efb9b9; }
+
+/* Buttons */
+.btn { display: inline-block; padding: 8px 16px; border: 1px solid var(--maroon); border-radius: 4px;
+       background: #fff; color: var(--maroon); text-decoration: none; font-family: Arial, sans-serif;
+       font-size: 0.9rem; cursor: pointer; }
+.btn-primary { background: var(--maroon); color: #fff; }
+.btn-danger { background: #c0392b; border-color: #c0392b; color: #fff; }
+.btn-small { padding: 4px 10px; font-size: 0.8rem; }
+.btn:hover { opacity: 0.9; }
+
+/* Edition header */
+.edition-header { text-align: center; margin-bottom: 16px; }
+.edition-date { color: #666; font-style: italic; }
+
+/* Viewer */
+.viewer { background: #fff; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.viewer-toolbar { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
+                  background: #2f2f2f; color: #fff; padding: 10px; font-family: Arial, sans-serif; }
+.viewer-toolbar button { background: var(--maroon); color: #fff; border: none; padding: 6px 14px;
+                         border-radius: 4px; cursor: pointer; font-size: 0.9rem; }
+.viewer-toolbar button:hover { background: var(--maroon-dark); }
+.viewer-toolbar a { color: var(--gold); font-size: 0.85rem; }
+.toolbar-sep { width: 1px; height: 22px; background: #555; }
+.viewer-stage { overflow: auto; max-height: 80vh; background: #555; text-align: center; padding: 16px; }
+.viewer-stage img { width: 100%; max-width: none; box-shadow: 0 2px 12px rgba(0,0,0,0.5); }
+.thumbnails { display: flex; gap: 8px; overflow-x: auto; padding: 10px; background: #efefef; }
+.thumb { height: 90px; border: 2px solid transparent; cursor: pointer; border-radius: 3px; }
+.thumb.active { border-color: var(--maroon); }
+
+/* PDF */
+.pdf-section { margin-top: 18px; text-align: center; }
+.pdf-frame { width: 100%; height: 80vh; border: 1px solid var(--border); border-radius: 6px; }
+
+/* Archive */
+.archive-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 18px; }
+.archive-card { background: #fff; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;
+                text-decoration: none; color: var(--ink); transition: box-shadow 0.2s; }
+.archive-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.15); }
+.archive-card img { width: 100%; height: 220px; object-fit: cover; object-position: top; }
+.cover-placeholder { width: 100%; height: 220px; display: flex; align-items: center; justify-content: center;
+                     background: var(--maroon); color: var(--gold); font-size: 1.8rem; font-weight: bold; }
+.archive-card-body { padding: 10px 12px; }
+.archive-card-body h3 { font-size: 1rem; margin-bottom: 4px; }
+
+/* Forms / admin */
+.auth-box { max-width: 380px; margin: 40px auto; background: #fff; border: 1px solid var(--border);
+            border-radius: 6px; padding: 26px; }
+.admin-form { max-width: 560px; background: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 22px; }
+.auth-box label, .admin-form label { display: block; margin-bottom: 14px; font-family: Arial, sans-serif; font-size: 0.9rem; }
+.auth-box input, .admin-form input { display: block; width: 100%; margin-top: 5px; padding: 8px;
+                                     border: 1px solid var(--border); border-radius: 4px; font-size: 0.95rem; }
+.admin-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
+                gap: 10px; margin-bottom: 18px; }
+.admin-table { width: 100%; border-collapse: collapse; background: #fff; font-family: Arial, sans-serif; font-size: 0.92rem; }
+.admin-table th, .admin-table td { border: 1px solid var(--border); padding: 9px 12px; text-align: left; }
+.admin-table th { background: var(--maroon); color: #fff; }
+.admin-table .actions { display: flex; gap: 8px; align-items: center; }
+
+/* Page management */
+.page-manage-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                    gap: 14px; margin-top: 12px; }
+.page-manage-card { background: #fff; border: 1px solid var(--border); border-radius: 6px;
+                    padding: 8px; text-align: center; }
+.page-manage-card img { width: 100%; height: 170px; object-fit: cover; object-position: top; border-radius: 3px; }
+.page-manage-card p { margin: 6px 0; font-family: Arial, sans-serif; font-size: 0.85rem; }
+
+/* Misc */
+.empty-state { text-align: center; padding: 60px 20px; color: #666; }
+.site-footer { background: var(--maroon-dark); color: #f1e0c8; text-align: center;
+               padding: 14px; font-family: Arial, sans-serif; font-size: 0.85rem; }
+
+@media (max-width: 600px) {
+  .brand { font-size: 1.7rem; }
+  .main-nav a { margin: 0 8px; }
+  .viewer-stage { max-height: 60vh; }
+}

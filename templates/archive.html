@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Archive &mdash; Shree Classified{% endblock %}
+{% block content %}
+<h1>Edition Archive</h1>
+{% if editions %}
+<div class="archive-grid">
+  {% for edition in editions %}
+  <a class="archive-card" href="{{ url_for('view_edition', edition_id=edition.id) }}">
+    {% if edition.cover %}
+      <img src="{{ url_for('uploaded_file', filename=edition.cover) }}" alt="{{ edition.title }}">
+    {% else %}
+      <div class="cover-placeholder">PDF</div>
+    {% endif %}
+    <div class="archive-card-body">
+      <h3>{{ edition.title }}</h3>
+      <p>{{ edition.publish_date }}</p>
+      <p class="muted">{{ edition.page_count }} page(s){% if edition.pdf_file %} + PDF{% endif %}</p>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state"><p>No editions have been published yet.</p></div>
+{% endif %}
+{% endblock %}

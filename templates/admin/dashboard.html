@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard &mdash; Shree Classified{% endblock %}
+{% block content %}
+<div class="admin-header">
+  <h1>Admin Dashboard</h1>
+  <div>
+    <a class="btn btn-primary" href="{{ url_for('admin_upload') }}">+ Upload new edition</a>
+    <a class="btn" href="{{ url_for('admin_logout') }}">Log out</a>
+  </div>
+</div>
+
+{% if editions %}
+<table class="admin-table">
+  <thead>
+    <tr><th>Title</th><th>Publish date</th><th>Pages</th><th>PDF</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+    {% for edition in editions %}
+    <tr>
+      <td><a href="{{ url_for('view_edition', edition_id=edition.id) }}">{{ edition.title }}</a></td>
+      <td>{{ edition.publish_date }}</td>
+      <td>{{ edition.page_count }}</td>
+      <td>{{ 'Yes' if edition.pdf_file else 'No' }}</td>
+      <td class="actions">
+        <a class="btn btn-small" href="{{ url_for('admin_edit', edition_id=edition.id) }}">Edit</a>
+        <form method="post" action="{{ url_for('admin_delete_edition', edition_id=edition.id) }}"
+              onsubmit="return confirm('Delete this entire edition?');">
+          <button type="submit" class="btn btn-small btn-danger">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="empty-state"><p>No editions yet. Upload your first weekly edition.</p></div>
+{% endif %}
+{% endblock %}

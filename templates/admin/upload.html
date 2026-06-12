@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Upload Edition &mdash; Shree Classified{% endblock %}
+{% block content %}
+<h1>Upload new weekly edition</h1>
+<form method="post" enctype="multipart/form-data" class="admin-form">
+  <label>Edition title
+    <input type="text" name="title" placeholder="e.g. Shree Classified - Week 24, 2026" required>
+  </label>
+  <label>Publish date
+    <input type="date" name="publish_date" required>
+  </label>
+  <label>Page images (select multiple, in page order)
+    <input type="file" name="pages" accept=".jpg,.jpeg,.png,.gif,.webp" multiple>
+  </label>
+  <label>Full edition PDF (optional)
+    <input type="file" name="pdf" accept=".pdf">
+  </label>
+  <p class="muted">Upload page images for the online viewer, a PDF for downloads, or both.</p>
+  <button type="submit" class="btn btn-primary">Upload edition</button>
+  <a class="btn" href="{{ url_for('admin_dashboard') }}">Cancel</a>
+</form>
+{% endblock %}

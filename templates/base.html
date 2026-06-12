@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Shree Classified{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="masthead">
+      <a href="{{ url_for('index') }}" class="brand">
+        <span class="brand-shree">Shree</span> <span class="brand-classified">Classified</span>
+      </a>
+      <p class="tagline">Your Weekly Classified E-Paper</p>
+    </div>
+    <nav class="main-nav">
+      <a href="{{ url_for('index') }}">Latest Edition</a>
+      <a href="{{ url_for('archive') }}">Archive</a>
+      <a href="{{ url_for('admin_dashboard') }}">Admin</a>
+    </nav>
+  </header>
+
+  <main class="content">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; Shree Classified &mdash; Published weekly. For advertisements contact: <strong>+91-XXXXXXXXXX</strong> | <strong>shreeclassified@example.com</strong></p>
+  </footer>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
