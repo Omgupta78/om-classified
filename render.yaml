@@ -1,8 +1,10 @@
 services:
   - type: web
     name: shree-classified
-    runtime: docker
+    runtime: python
     plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
     envVars:
       - key: DATABASE_URL
         value: "postgresql://neondb_owner:npg_TadgY6mjw3cG@ep-damp-brook-adaj2kn8-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require"
@@ -12,3 +14,5 @@ services:
         value: admin
       - key: ADMIN_PASSWORD
         value: admin123
+      - key: PYTHON_VERSION
+        value: "3.11.11"
