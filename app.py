@@ -4,15 +4,12 @@ from functools import wraps
 
 import psycopg2
 import psycopg2.extras
-from flask import (Flask, abort, flash, g, redirect, render_template, request,
-                   send_from_directory, session, url_for)
+from flask import (Flask, abort, flash, g, make_response, redirect,
+                   render_template, request, session, url_for)
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-UPLOAD_DIR = os.path.join(BASE_DIR, 'uploads')
-
-# PostgreSQL connection string from Neon (set via environment variable)
+# PostgreSQL connection string from Neon
 DATABASE_URL = os.environ.get(
     'DATABASE_URL',
     'postgresql://neondb_owner:npg_TadgY6mjw3cG@ep-damp-brook-adaj2kn8-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require'
@@ -21,9 +18,15 @@ DATABASE_URL = os.environ.get(
 IMAGE_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif', 'webp'}
 PDF_EXTENSIONS = {'pdf'}
 
+CONTENT_TYPES = {
+    'jpg': 'image/jpeg', 'jpeg': 'image/jpeg',
+    'png': 'image/png', 'gif': 'image/gif',
+    'webp': 'image/webp', 'pdf': 'application/pdf',
+}
+
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'change-this-secret-key-in-production')
-app.config['MAX_CONTENT_LENGTH'] = 200 * 1024 * 1024  # 200 MB per upload request
+app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50 MB
 
 ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', 'admin')
 ADMIN_PASSWORD_HASH = generate_password_hash(os.environ.get('ADMIN_PASSWORD', 'admin123'))
@@ -53,7 +56,6 @@ def close_db(exc):
 
 def init_db():
     """Create tables if they don't exist."""
-    os.makedirs(UPLOAD_DIR, exist_ok=True)
     conn = psycopg2.connect(DATABASE_URL)
     cur = conn.cursor()
     cur.execute('''
@@ -71,6 +73,15 @@ def init_db():
             edition_id INTEGER NOT NULL REFERENCES editions (id) ON DELETE CASCADE,
             page_number INTEGER NOT NULL,
             filename TEXT NOT NULL
+        )
+    ''')
+    cur.execute('''
+        CREATE TABLE IF NOT EXISTS files (
+            id SERIAL PRIMARY KEY,
+            filename TEXT NOT NULL UNIQUE,
+            content_type TEXT NOT NULL,
+            data BYTEA NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
     conn.commit()
@@ -100,20 +111,32 @@ def allowed_file(filename, extensions):
 
 
 def save_upload(file_storage):
-    """Save an uploaded file with a unique name and return the stored filename."""
+    """Save an uploaded file into PostgreSQL and return the stored filename."""
     original = secure_filename(file_storage.filename)
     ext = original.rsplit('.', 1)[1].lower()
     stored_name = f"{uuid.uuid4().hex}.{ext}"
-    file_storage.save(os.path.join(UPLOAD_DIR, stored_name))
+    content_type = CONTENT_TYPES.get(ext, 'application/octet-stream')
+    data = file_storage.read()
+
+    db = get_db()
+    cur = get_cursor()
+    cur.execute(
+        'INSERT INTO files (filename, content_type, data) VALUES (%s, %s, %s)',
+        (stored_name, content_type, psycopg2.Binary(data)))
+    db.commit()
+    cur.close()
     return stored_name
 
 
 def delete_stored_file(filename):
+    """Delete a file from PostgreSQL storage."""
     if not filename:
         return
-    path = os.path.join(UPLOAD_DIR, filename)
-    if os.path.isfile(path):
-        os.remove(path)
+    db = get_db()
+    cur = get_cursor()
+    cur.execute('DELETE FROM files WHERE filename = %s', (filename,))
+    db.commit()
+    cur.close()
 
 
 def login_required(view):
@@ -163,7 +186,17 @@ def archive():
 
 @app.route('/uploads/<path:filename>')
 def uploaded_file(filename):
-    return send_from_directory(UPLOAD_DIR, filename)
+    """Serve uploaded files from PostgreSQL storage."""
+    cur = get_cursor()
+    cur.execute('SELECT content_type, data FROM files WHERE filename = %s', (filename,))
+    row = cur.fetchone()
+    cur.close()
+    if row is None:
+        abort(404)
+    response = make_response(bytes(row['data']))
+    response.headers['Content-Type'] = row['content_type']
+    response.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
+    return response
 
 
 # ---------------------------------------------------------------- admin auth
